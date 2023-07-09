@@ -3,18 +3,36 @@ const jwt = require('jsonwebtoken');
 const session = require('express-session')
 const customer_routes = require('./router/auth_users.js').authenticated;
 const genl_routes = require('./router/general.js').general;
+const bodyParser = require('body-parser')
 
 const app = express();
-// fjja 
 
 app.use(express.json());
 
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
-
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers['authorization'];
+    if(typeof bearerHeader !== 'undefined') {
+      const bearer = bearerHeader.split(' ');
+      const bearerToken = bearer[1];
+      req.token = bearerToken;
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  }
+app.use("/customer/auth/*", bodyParser.urlencoded({extended: true}), function auth(req,res,next){
+    jwt.verify(req.body.token, 'secretkey', (err, authData) => {
+        if(err) {
+            console.log(err)
+            res.sendStatus(403);
+        } 
+        else {
+            next()
+        }
+      });
 });
-ظظ
+
  
 const PORT =5000;
 
