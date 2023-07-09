@@ -37,7 +37,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   let author = req.params.author;
-  let book;
+  let nbooks = [];
   function json2array(json){
     var result = [];
     var keys = Object.keys(json);
@@ -49,12 +49,11 @@ public_users.get('/author/:author',function (req, res) {
   let arr = json2array(books);
   for(let i=0; i<arr.length;i++){
     if(arr[i].author === author){
-      book = arr[i];
-      break;
+      nbooks.push(arr[i]);
     }
   }
-  if(book){
-    return res.status(200).json(book);
+  if(nbooks){
+    return res.status(200).json(nbooks);
   }
   else{
     return res.json({message: "not founded"});
