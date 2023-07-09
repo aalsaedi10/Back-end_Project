@@ -42,16 +42,27 @@ regd_users.post("/login", bodyParser.urlencoded({extended: true}), (req,res) => 
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-  let username = req.session.username;
-  let review = req.body.review;
-  books[req.params.isbn].reviews.push({username: username, review: review})
+regd_users.put("/auth/review/:isbn", async(req, res) => {
+  try{
+    let username = req.session.username;
+    let review = req.body.review;
+    await books[req.params.isbn].reviews.push({username: username, review: review})
+    res.status(201).json({message: 'review send thank you'})
+  }
+  catch (error) {
+    throw new error(error)
+  }
 });
 
-regd_users.delete("/auth/review/:isbn", (req, res) => {
-  let username = req.session.username;
-  books[req.params.isbn].reviews = books[req.params.isbn].reviews.filter((review => review.username != username))
-  res.json(books)
+regd_users.delete("/auth/review/:isbn", async(req, res) => {
+  try{
+    let username = req.session.username;
+    books[req.params.isbn].reviews = books[req.params.isbn].reviews.filter((review => review.username != username))
+    res.json({message: 'review deleted',books})
+  }
+  catch (error) {
+    throw new error(error)
+  }
 });
 
 module.exports.authenticated = regd_users;

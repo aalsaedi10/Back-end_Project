@@ -21,8 +21,8 @@ function verifyToken(req, res, next) {
       res.sendStatus(403);
     }
   }
-app.use("/customer/auth/*", bodyParser.urlencoded({extended: true}), function auth(req,res,next){
-    jwt.verify(req.body.token, 'secretkey', (err, authData) => {
+app.use("/customer/auth/*", verifyToken, bodyParser.urlencoded({extended: true}), function auth(req,res,next){
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
         if(err) {
             console.log(err)
             res.sendStatus(403);
